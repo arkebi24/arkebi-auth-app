@@ -32,7 +32,7 @@ const login = async (req, res) => {
         const { email, password } = req.body;
         const user = await UserModel.findOne({ email });
         const errorMsg = 'Your email or password is wrong! Please check';
-        if (!user) {
+        if (!user) {    //if user is not registered
             return res.status(403)
                 .json({ message: errorMsg, success: false });
         }
@@ -43,13 +43,18 @@ const login = async (req, res) => {
         }
         const jwtToken = jwt.sign(
             { email: user.email, _id: user._id },
-            process.env.JWT_SECRET,
+            process.env.JWT_TOKEN,
             { expiresIn: '24h' }
         )
-
+        res.cookie('jwt', jwtToken, {
+            httpOnly: true,
+            sameSite: 'Strict' // Adjust based on your CSRF protection strategy
+        });
+        req.token = jwtToken
+        req.user = user
         res.status(200)
             .json({
-                message: "Login Success",
+                message: "Logged in Successfully",
                 success: true,
                 jwtToken,
                 email,
@@ -64,7 +69,30 @@ const login = async (req, res) => {
     }
 }
 
+const logout = async (req, res) => {
+    try {
+        const token = req.headers.cookie.split('=')[1]
+        if (!token) res.status(400).send('Token not provided');
+        res.cookie('jwt', '', {
+            httpOnly: true,
+            sameSite: 'Strict', // Adjust based on your CSRF protection strategy
+            expires: new Date(0) // Set expiration date to a past date
+          });
+        res.status(200).send({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500)
+            .json({
+                message: "Internal server errror",
+                success: false
+            })
+    }
+
+
+}
+
 module.exports = {
     register,
-    login
+    login,
+    logout
 }
