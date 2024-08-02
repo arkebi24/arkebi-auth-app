@@ -4,6 +4,7 @@ require('dotenv').config();
 require('./Schema/mongoDB');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const authRouter = require('./Routes/authRouter');
 
 const PORT = process.env.PORT || 8080;
 
@@ -15,6 +16,7 @@ app.get('/ping', (req, res) => {
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/auth', authRouter);
 
 
 app.listen(PORT, () => {
