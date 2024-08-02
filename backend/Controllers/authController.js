@@ -11,16 +11,16 @@ const register = async (req, res) => {
             return res.status(409).json({ message: `User email already registered, please login`, success: false });
         }
         const userModel = new UserModel({ name, email, password, country, phonenumber });
-        userModel.password = await bcrypt.hash(password, 10);
+        userModel.password = await bcrypt.hash(userModel.password, 10)
         await userModel.save();
         res.status(201).json({
-            message: "Signup successfully",
+            message: "Registered successfully",
             success: true
         })
     } catch (error) {
         res.status(500)
             .json({
-                message: "Internal server errror",
+                message: `Internal server errror`,
                 success: false
             })
     }
