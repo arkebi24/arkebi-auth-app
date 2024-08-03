@@ -20,7 +20,7 @@ function Profile() {
         }, 1000)
     }
 
-    const fetchProducts = async () => {
+    const fetchProfile = async () => {
         try {
             const url = "http://localhost:8080/profile";
             const headers = {
@@ -36,7 +36,7 @@ function Profile() {
         }
     }
     useEffect(() => {
-        fetchProducts()
+        fetchProfile()
     }, [])
 
     return (

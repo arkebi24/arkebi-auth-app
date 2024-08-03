@@ -80,7 +80,6 @@ const logout = async (req, res) => {
           });
         res.status(200).send({ message: 'Logged out successfully' });
     } catch (error) {
-        console.log(error);
         res.status(500)
             .json({
                 message: "Internal server errror",
